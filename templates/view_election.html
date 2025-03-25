@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ election.name }} - Quantum-Safe Voting System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #6c757d;
+            --accent-color: #00d4ff;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), #7242e4);
+        }
+        
+        body { 
+            padding-top: 0;
+            background-color: #f7f9fc; 
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .navbar {
+            background: white !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 0.7rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+        
+        .election-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .encryption-badge {
+            background-color: rgba(0,0,0,0.2);
+            color: white;
+            border-radius: 30px;
+            padding: 0.3rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .encryption-badge i {
+            margin-right: 0.5rem;
+        }
+        
+        .title-accent {
+            color: var(--accent-color);
+        }
+        
+        .back-button {
+            color: white;
+            background-color: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50px;
+            padding: 0.5rem 1.2rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .back-button:hover {
+            background-color: rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .election-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: none;
+            background-color: white;
+            margin-bottom: 1.5rem;
+        }
+        
+        .election-card .card-header {
+            background-color: rgba(0,0,0,0.03);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 600;
+        }
+        
+        .election-card .card-body {
+            padding: 1.8rem;
+        }
+        
+        .candidate-list {
+            margin-top: 1.5rem;
+        }
+        
+        .candidate-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background-color: white;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+        }
+        
+        .candidate-item:hover {
+            transform: translateX(5px);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .candidate-icon {
+            margin-right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .status-active {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+        
+        .status-closed {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+        
+        .vote-btn {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
+        }
+        
+        .vote-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 107, 255, 0.4);
+        }
+        
+        .close-btn {
+            background-color: #fd7e14;
+            border: none;
+            border-radius: 50px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .results-btn {
+            background-color: #17a2b8;
+            border: none;
+            border-radius: 50px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .results-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: none;
+            background: linear-gradient(to bottom, #f8f9fa, white);
+        }
+        
+        .results-card .card-header {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+        
+        .results-table {
+            margin-top: 1rem;
+        }
+        
+        .results-table th {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            background: var(--gradient-primary);
+        }
+        
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
+            <i class="fas fa-shield-alt me-2"></i>Quantum-Safe Voting
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('home') }}">
+                  <i class="fas fa-home me-1"></i>Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('create_election') }}">
+                  <i class="fas fa-plus-circle me-1"></i>Create Election
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Election Header -->
+        <div class="election-header px-4 mb-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="encryption-badge">
+                        <i class="fas fa-lock"></i> TFHE Encrypted
+                    </div>
+                    <h1 class="mb-2">{{ election.name }}</h1>
+                    <p class="lead mb-0">Secured with post-quantum cryptography</p>
+                </div>
+                <a href="{{ url_for('home') }}" class="back-button btn">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Elections
+                </a>
+            </div>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>{{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Election Details Card -->
+                <div class="election-card card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-info-circle me-2"></i>Election Details
+                    </div>
+                    <div class="card-body">
+                        <div class="status-badge {% if election.active %}status-active{% else %}status-closed{% endif %}">
+                            {% if election.active %}
+                                <i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i>Active
+                            {% else %}
+                                <i class="fas fa-check-circle me-1"></i>Closed
+                            {% endif %}
+                        </div>
+                        
+                        <p class="card-text">{{ election.description }}</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <p><i class="far fa-calendar-alt me-2 text-primary"></i><strong>Created:</strong> {{ election.created_at }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><i class="fas fa-key me-2 text-primary"></i><strong>ID:</strong> {{ election.id[:8] }}...</p>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h5><i class="fas fa-users me-2 text-primary"></i>Candidates</h5>
+                        <div class="candidate-list">
+                            {% for candidate in election.candidates %}
+                                <div class="candidate-item">
+                                    <div class="candidate-icon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ candidate }}</h6>
+                                        <small class="text-muted">Candidate #{{ loop.index }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mt-4 d-flex justify-content-center">
+                            {% if election.active %}
+                                <a href="{{ url_for('vote', election_id=election.id) }}" class="btn btn-primary vote-btn me-3">
+                                    <i class="fas fa-vote-yea me-2"></i>Cast Your Vote
+                                </a>
+                                <a href="{{ url_for('close_election', election_id=election.id) }}" class="btn btn-warning close-btn">
+                                    <i class="fas fa-lock me-2"></i>Close & Count Votes
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('view_results', election_id=election.id) }}" class="btn btn-info results-btn">
+                                    <i class="fas fa-chart-pie me-2"></i>View Detailed Results
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Security Info Card -->
+                <div class="election-card card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-shield-alt me-2"></i>Security Information
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">This election is protected by:</p>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 text-primary">
+                                <i class="fas fa-lock fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">TFHE Encryption</h6>
+                                <small class="text-muted">Fully homomorphic encryption over the torus</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 text-primary">
+                                <i class="fas fa-user-secret fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Vote Privacy</h6>
+                                <small class="text-muted">Your vote remains encrypted even during counting</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center">
+                            <div class="me-3 text-primary">
+                                <i class="fas fa-microchip fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Post-Quantum Safety</h6>
+                                <small class="text-muted">Protected against quantum computing attacks</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if results %}
+                <!-- Results Summary Card -->
+                <div class="results-card card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-2"></i>Election Results
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <h3 class="mb-0">{{ results.vote_count }}</h3>
+                            <small class="text-muted">Total Votes</small>
+                        </div>
+                        
+                        <div class="results-table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Candidate</th>
+                                        <th class="text-center">Votes</th>
+                                        <th class="text-end">%</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for candidate, votes in results.results.items() %}
+                                        <tr>
+                                            <td>{{ candidate }}</td>
+                                            <td class="text-center">{{ votes }}</td>
+                                            <td class="text-end">
+                                                {{ "%.1f"|format(votes / results.vote_count * 100) }}%
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" 
+                                                        style="width: {{ votes / results.vote_count * 100 }}%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <small class="text-muted">Results calculated at: {{ results.timestamp }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Quantum-Safe Voting System</h5>
+                    <p>Powered by TFHE (Fully Homomorphic Encryption over the Torus)</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Advanced cryptography for secure and private voting</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

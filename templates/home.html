@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Voting System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #6c757d;
+            --accent-color: #00d4ff;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), #7242e4);
+        }
+        
+        body { 
+            padding-top: 0;
+            background-color: #f7f9fc; 
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .navbar {
+            background: white !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 0.7rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-color) !important;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .hero-section {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cGF0aCBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiIGQ9Ik0wIDBoMjAwdjIwMEgweiIvPjxwYXRoIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wOCkiIGQ9Ik0wIDBoNTB2NTBIMHoiLz48cGF0aCBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDgpIiBkPSJNNTAgMGg1MHY1MEg1MHoiLz48cGF0aCBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDgpIiBkPSJNMTAwIDBoNTB2NTBIMTAweg==' />
+            opacity: 0.5;
+        }
+        
+        .security-badge {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .security-badge i {
+            margin-right: 0.5rem;
+        }
+        
+        .title-highlight {
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .title-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        .election-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            border: none;
+            background-color: white;
+            height: 100%;
+        }
+        
+        .election-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .election-card .card-header {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+        
+        .election-card .card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .election-card .card-footer {
+            background-color: rgba(0,0,0,0.02);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 1.5rem;
+        }
+        
+        .status-badge {
+            padding: 0.3rem 0.7rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+        
+        .status-closed {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+        
+        .create-btn {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
+        }
+        
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 107, 255, 0.4);
+        }
+        
+        .security-info {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .security-feature {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .security-feature i {
+            margin-right: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
+            <i class="fas fa-shield-alt me-2"></i>Quantum-Safe Voting
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('home') }}">
+                  <i class="fas fa-home me-1"></i>Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('create_election') }}">
+                  <i class="fas fa-plus-circle me-1"></i>Create Election
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container position-relative">
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i> Protected by Post-Quantum Cryptography
+            </div>
+            <h1 class="mb-2"><span class="title-highlight">Quantum-Safe</span> Voting System</h1>
+            <p class="lead mb-4">A next-generation voting platform secured by TFHE homomorphic encryption</p>
+            <p class="mb-0">Build trust in your elections with advanced cryptography that's secure against quantum computing attacks</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Security Info Section -->
+        <div class="security-info mb-4">
+            <h4 class="mb-3"><i class="fas fa-lock text-primary me-2"></i>Why Our Voting System is Different</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="security-feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <strong>Post-Quantum Security</strong>
+                            <p class="mb-0 text-muted">Protected against attacks from quantum computers</p>
+                        </div>
+                    </div>
+                    <div class="security-feature">
+                        <i class="fas fa-user-secret"></i>
+                        <div>
+                            <strong>Complete Vote Privacy</strong>
+                            <p class="mb-0 text-muted">Votes remain encrypted even during counting</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="security-feature">
+                        <i class="fas fa-calculator"></i>
+                        <div>
+                            <strong>Homomorphic Encryption</strong>
+                            <p class="mb-0 text-muted">Performs calculations on encrypted data</p>
+                        </div>
+                    </div>
+                    <div class="security-feature">
+                        <i class="fas fa-check-double"></i>
+                        <div>
+                            <strong>Verifiable Results</strong>
+                            <p class="mb-0 text-muted">Accurate results without revealing individual votes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Elections Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-vote-yea me-2 text-primary"></i>Active Elections</h2>
+            <a href="{{ url_for('create_election') }}" class="btn btn-primary create-btn">
+                <i class="fas fa-plus me-2"></i>Create New Election
+            </a>
+        </div>
+        
+        <div class="row">
+            {% if elections %}
+                {% for election in elections %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="election-card card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">{{ election.name }}</h5>
+                                <span class="status-badge {% if election.active %}status-active{% else %}status-closed{% endif %}">
+                                    {% if election.active %}
+                                        <i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i>Active
+                                    {% else %}
+                                        <i class="fas fa-check-circle me-1"></i>Closed
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text flex-grow-1">{{ election.description }}</p>
+                                <p class="card-text mb-0">
+                                    <small class="text-muted">
+                                        <i class="far fa-calendar-alt me-1"></i>Created: {{ election.created_at }}
+                                    </small>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url_for('view_election', election_id=election.id) }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-external-link-alt me-1"></i>View Details
+                                </a>
+                                {% if election.active %}
+                                    <a href="{{ url_for('vote', election_id=election.id) }}" class="btn btn-primary btn-sm ms-2">
+                                        <i class="fas fa-vote-yea me-1"></i>Cast Vote
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>No elections have been created yet.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Quantum-Safe Voting System</h5>
+                    <p>Powered by TFHE (Fully Homomorphic Encryption over the Torus)</p>
+                    <p>Advanced cryptography that allows vote counting without decrypting individual ballots</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>About TFHE Security</h5>
+                    <p>TFHE provides security against quantum computer attacks, ensuring your vote remains private both now and in the future.</p>
+                    <p>Learn more about <a href="https://en.wikipedia.org/wiki/Homomorphic_encryption" target="_blank">homomorphic encryption</a>.</p>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2025 Quantum-Safe Voting System. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

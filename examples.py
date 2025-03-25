@@ -23,13 +23,13 @@ def example_basic_encryption():
     bit = 1
     encrypted_bit = context.encrypt_bit(bit)
     decrypted_bit = context.decrypt_to_bit(encrypted_bit)
-    
+     
     print(f"Original bit: {bit}")
     print(f"Decrypted bit: {decrypted_bit}")
     print(f"Correctly decrypted: {bit == decrypted_bit}")
     
     # Encrypt a list of bits
-    bits = [1, 0, 1, 1, 0, 0, 1]
+    bits = [1, 0, 1, 1, 0, 0, 1] 
     encrypted_bits = context.encrypt_bits(bits)
     decrypted_bits = context.decrypt_to_bits(encrypted_bits)
     
