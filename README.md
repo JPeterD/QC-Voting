@@ -8,12 +8,6 @@ Default administrator credentials:
 - Username: `admin`
 - Password: `password123` 
 
-**Important:** For security reasons, change these credentials immediately in a production environment.
-
-## Disclaimer
-
-This implementation is for educational purposes only and is not meant to be secure or optimized for efficiency in production environments. For production use, consider established libraries like [OpenFHE](https://github.com/openfheorg/openfhe-development), [SEAL](https://github.com/microsoft/SEAL), or [PALISADE](https://gitlab.com/palisade/palisade-development).
-
 ## Features
 
 - Post-quantum secure voting using TFHE homomorphic encryption
@@ -107,9 +101,3 @@ The backend library is based on the Ring Learning With Errors (RLWE) cryptograph
 ## License
 
 This project is open source and available for educational and research purposes.
-
-## References
-
-- Fan-Vercauteren (FV) scheme: https://eprint.iacr.org/2012/144.pdf
-- Homomorphic Encryption: https://en.wikipedia.org/wiki/Homomorphic_encryption
-- TFHE: https://tfhe.github.io/tfhe/
