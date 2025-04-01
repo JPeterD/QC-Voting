@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cff08694-6d8f-4d94-a6ae-d78b72cfbb81",
+    "name": "California Election",
+    "description": "",
+    "candidates": [
+      "Jahres",
+      "Raejean",
+      "Destiny"
+    ],
+    "created_at": "2025-04-01 12:51:20",
+    "active": false
+  },
+  {
+    "id": "2aaf7686-e68f-454c-ae74-a0f518f2a22c",
+    "name": "Louisiana Election",
+    "description": "",
+    "candidates": [
+      "Jahres",
+      "Raejean",
+      "Destiny"
+    ],
+    "created_at": "2025-04-01 12:54:29",
+    "active": true
+  }
+]
