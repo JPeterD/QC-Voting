@@ -21,6 +21,18 @@
       "Destiny"
     ],
     "created_at": "2025-04-01 12:54:29",
+    "active": false
+  },
+  {
+    "id": "1fb39790-450f-4a77-9229-d01ab9bc908d",
+    "name": "Grambling Election",
+    "description": "",
+    "candidates": [
+      "Jahres",
+      "Raejean",
+      "Destiny"
+    ],
+    "created_at": "2025-04-03 16:21:27",
     "active": true
   }
 ]

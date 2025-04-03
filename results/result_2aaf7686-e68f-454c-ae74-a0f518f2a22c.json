@@ -1,0 +1,11 @@
+{
+  "election_id": "2aaf7686-e68f-454c-ae74-a0f518f2a22c",
+  "election_name": "Louisiana Election",
+  "vote_count": 2,
+  "results": {
+    "Jahres": 1034378142,
+    "Raejean": 3972215327,
+    "Destiny": 1355504122
+  },
+  "timestamp": "2025-04-01 17:08:30"
+}

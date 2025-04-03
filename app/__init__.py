@@ -5,9 +5,11 @@ This Flask application provides a web interface for a secure voting system
 backed by the TFHE homomorphic encryption scheme.
 """
 
-from flask import Flask
+from flask import Flask, request
 import os
+import time
 from tfhe_lib import TFHEContext
+from app.utils.tracing import instrument_flask_app, tracer
 
 # Initialize a global encryption context
 # Note: In a real application, you would need to securely manage keys
@@ -42,5 +44,23 @@ def create_app():
     app.register_blueprint(elections_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(votes_bp)
+    
+    # Initialize tracing
+    app = instrument_flask_app(app)
+    
+    # Add request timing middleware
+    @app.before_request
+    def before_request():
+        request.start_time = time.time()
+        
+    @app.after_request
+    def after_request(response):
+        if hasattr(request, 'start_time'):
+            request_duration = time.time() - request.start_time
+            from opentelemetry import trace
+            current_span = trace.get_current_span()
+            current_span.set_attribute("http.request_duration", request_duration)
+            app.logger.info(f"Request to {request.path} took {request_duration:.4f}s")
+        return response
     
     return app
