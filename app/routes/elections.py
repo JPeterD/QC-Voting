@@ -56,7 +56,7 @@ def view_election(election_id):
     return render_template('view_election.html', election=election, results=results, has_voted=has_voted)
 
 
-@elections_bp.route('/close_election/<election_id>')
+@elections_bp.route('/close_election/<election_id>', methods=['POST'])
 @admin_required
 def close_election(election_id):
     """Close an election and count the votes (admin only)"""

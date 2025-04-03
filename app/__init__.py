@@ -8,12 +8,26 @@ backed by the TFHE homomorphic encryption scheme.
 from flask import Flask, request
 import os
 import time
+import os
 from tfhe_lib import TFHEContext
 from app.utils.tracing import instrument_flask_app, tracer
 
 # Initialize a global encryption context
 # Note: In a real application, you would need to securely manage keys
-encryption_context = TFHEContext(polynomial_size=32).generate_keys()
+if os.environ.get("TFHE_PRODUCTION_MODE", "false").lower() == "true":
+    # Production-sized parameters
+    encryption_context = TFHEContext(
+        polynomial_size=1024,
+        coefficient_modulus=2**30,
+        error_std_dev=3
+    ).generate_keys()
+else:
+    # Development/testing parameters
+    encryption_context = TFHEContext(
+        polynomial_size=32,
+        coefficient_modulus=2**14,
+        error_std_dev=1
+    ).generate_keys()
 
 # Create and configure the app
 def create_app():

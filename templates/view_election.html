@@ -344,9 +344,11 @@
                                 </button>
                                 {% endif %}
                                 {% if session.get('admin_logged_in') %}
-                                <a href="{{ url_for('elections.close_election', election_id=election.id) }}" class="btn btn-warning close-btn">
-                                    <i class="fas fa-lock me-2"></i>Close & Count Votes
-                                </a>
+                                <form action="{{ url_for('elections.close_election', election_id=election.id) }}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-warning close-btn">
+                                        <i class="fas fa-lock me-2"></i>Close & Count Votes
+                                    </button>
+                                </form>
                                 {% endif %}
                             {% else %}
                                 <a href="{{ url_for('elections.view_results', election_id=election.id) }}" class="btn btn-info results-btn">

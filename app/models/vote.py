@@ -21,15 +21,14 @@ class VoteModel:
         Serialize a TFHECiphertext object for storage
         Note: This is a simplified version, real implementations would need proper serialization
         """
-        with backend_tracer.start_as_current_span("serialize_ciphertext"):
-            # Extract the raw data to serialize
-            cipher0 = ciphertext.raw_ciphertext[0].tolist()
-            cipher1 = ciphertext.raw_ciphertext[1].tolist()
-            
-            return {
-                'cipher0': cipher0,
-                'cipher1': cipher1
-            }
+        # Extract the raw data to serialize
+        cipher0 = ciphertext.raw_ciphertext[0].tolist()
+        cipher1 = ciphertext.raw_ciphertext[1].tolist()
+        
+        return {
+            'cipher0': cipher0,
+            'cipher1': cipher1
+        }
     
     @trace_method()
     def deserialize_ciphertext(self, serialized_data):
@@ -54,16 +53,15 @@ class VoteModel:
             
             # Create encrypted votes (1 for selected, 0 for others)
             encrypted_votes = {}
-            for candidate in candidates:
-                if candidate == selected_candidate:
-                    with backend_tracer.start_as_current_span(f"encrypt_vote_for_{candidate}"):
+            with backend_tracer.start_as_current_span("encrypt_vote"):
+                for candidate in candidates:
+                    if candidate == selected_candidate:
                         # Encrypt a '1' for the selected candidate
                         encrypted_vote = encryption_context.encrypt_bit(1)
-                        # Serialize the encrypted vote
-                        encrypted_votes[candidate] = self.serialize_ciphertext(encrypted_vote)
-                else:
-                    # Encrypt a '0' for all other candidates (no span)
-                    encrypted_vote = encryption_context.encrypt_bit(0)
+                    else:
+                        # Encrypt a '0' for all other candidates
+                        encrypted_vote = encryption_context.encrypt_bit(0)
+                    # Serialize the encrypted vote (no span)
                     encrypted_votes[candidate] = self.serialize_ciphertext(encrypted_vote)
             
             # Save the encrypted vote
@@ -83,86 +81,85 @@ class VoteModel:
         vote_file = os.path.join(self.votes_dir, f"vote_{election_id}_{voter_id}.json")
         return os.path.exists(vote_file)
     
-    @trace_method("count_homomorphic_votes")
     def count_votes(self, election_id, election):
         """
         Count votes for a specific election using homomorphic encryption
         """
-        if not election:
-            return None
+        with backend_tracer.start_as_current_span("count_homomorphic_votes") as current_span:
+            if not election:
+                return None
 
-        start_time = time.time()
-        current_span = tracer.get_current_span()
+            start_time = time.time()
 
-        # Initialize result containers for each candidate
-        candidates = election['candidates']
-        encrypted_results = {candidate: None for candidate in candidates}
-        
-        # Get all vote files for this election
-        vote_files = [f for f in os.listdir(self.votes_dir) 
-                     if f.startswith(f"vote_{election_id}_") and f.endswith(".json")]
-        
-        vote_count = 0
-        
-        # Add vote count to trace
-        current_span.set_attribute("election_id", election_id)
-        current_span.set_attribute("total_votes", len(vote_files))
-        current_span.set_attribute("candidate_count", len(candidates))
-        
-        # Process each vote
-        for vote_file in vote_files:
-            with tracer.start_as_current_span(f"process_vote_{vote_count}"):
-                vote_count += 1
-                with open(os.path.join(self.votes_dir, vote_file), 'r') as f:
-                    vote_data = json.load(f)
-                
-                # For each candidate, combine their encrypted vote with current tally
-                for candidate in candidates:
-                    with tracer.start_as_current_span(f"process_{candidate}_vote"):
-                        # Get the encrypted vote for this candidate (0 or 1)
-                        vote_cipher_data = vote_data.get(candidate, None)
-                        if vote_cipher_data:
-                            # Deserialize the ciphertext
-                            vote_cipher = self.deserialize_ciphertext(vote_cipher_data)
-                            
-                            # Update the running total
-                            if encrypted_results[candidate] is None:
-                                encrypted_results[candidate] = vote_cipher
-                            else:
-                                # Homomorphically add the new vote to the running total
-                                encrypted_results[candidate] = encrypted_results[candidate] + vote_cipher
-        
-        # Decrypt the final results
-        with tracer.start_as_current_span("decrypt_results"):
-            results = {}
-            for candidate, encrypted_count in encrypted_results.items():
-                with tracer.start_as_current_span(f"decrypt_{candidate}_result"):
-                    if encrypted_count is not None:
-                        # Decrypt to get the count
-                        count = encryption_context.decrypt_to_integer(encrypted_count)
-                        results[candidate] = count
-                    else:
-                        results[candidate] = 0
-        
-        # Save the results
-        from datetime import datetime
-        result_data = {
-            'election_id': election_id,
-            'election_name': election['name'],
-            'vote_count': vote_count,
-            'results': results,
-            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-        
-        result_file = os.path.join(self.results_dir, f"result_{election_id}.json")
-        with open(result_file, 'w') as f:
-            json.dump(result_data, f, indent=2)
-        
-        # Record processing time
-        processing_time = time.time() - start_time
-        current_span.set_attribute("total_processing_time", processing_time)
-        
-        return result_data
+            # Initialize result containers for each candidate
+            candidates = election['candidates']
+            encrypted_results = {candidate: None for candidate in candidates}
+            
+            # Get all vote files for this election
+            vote_files = [f for f in os.listdir(self.votes_dir)
+                          if f.startswith(f"vote_{election_id}_") and f.endswith(".json")]
+            
+            vote_count = 0
+            
+            # Add vote count to trace
+            current_span.set_attribute("election_id", election_id)
+            current_span.set_attribute("total_votes", len(vote_files))
+            current_span.set_attribute("candidate_count", len(candidates))
+            
+            # Process each vote
+            for vote_file in vote_files:
+                with backend_tracer.start_as_current_span(f"process_vote_{vote_count}"):
+                    vote_count += 1
+                    with open(os.path.join(self.votes_dir, vote_file), 'r') as f:
+                        vote_data = json.load(f)
+                    
+                    # For each candidate, combine their encrypted vote with current tally
+                    for candidate in candidates:
+                        with backend_tracer.start_as_current_span(f"process_{candidate}_vote"):
+                            # Get the encrypted vote for this candidate (0 or 1)
+                            vote_cipher_data = vote_data.get(candidate, None)
+                            if vote_cipher_data:
+                                # Deserialize the ciphertext
+                                vote_cipher = self.deserialize_ciphertext(vote_cipher_data)
+                                
+                                # Update the running total
+                                if encrypted_results[candidate] is None:
+                                    encrypted_results[candidate] = vote_cipher
+                                else:
+                                    # Homomorphically add the new vote to the running total
+                                    encrypted_results[candidate] = encrypted_results[candidate] + vote_cipher
+            
+            # Decrypt the final results
+            with backend_tracer.start_as_current_span("decrypt_results"):
+                results = {}
+                for candidate, encrypted_count in encrypted_results.items():
+                    with backend_tracer.start_as_current_span(f"decrypt_{candidate}_result"):
+                        if encrypted_count is not None:
+                            # Decrypt to get the count
+                            count = encryption_context.decrypt_to_integer(encrypted_count)
+                            results[candidate] = count
+                        else:
+                            results[candidate] = 0
+            
+            # Save the results
+            from datetime import datetime
+            result_data = {
+                'election_id': election_id,
+                'election_name': election['name'],
+                'vote_count': vote_count,
+                'results': results,
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            
+            result_file = os.path.join(self.results_dir, f"result_{election_id}.json")
+            with open(result_file, 'w') as f:
+                json.dump(result_data, f, indent=2)
+            
+            # Record processing time
+            processing_time = time.time() - start_time
+            current_span.set_attribute("total_processing_time", processing_time)
+            
+            return result_data
     
     @trace_method()
     def get_results(self, election_id):

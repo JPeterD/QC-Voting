@@ -1,0 +1,11 @@
+{
+  "election_id": "25e543cd-b679-4065-af6c-486f4fa744ee",
+  "election_name": "New York Election",
+  "vote_count": 1,
+  "results": {
+    "Jahres": 0,
+    "Raejean": 1,
+    "Destiny": 0
+  },
+  "timestamp": "2025-04-03 16:49:30"
+}

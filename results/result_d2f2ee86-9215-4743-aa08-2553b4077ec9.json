@@ -1,0 +1,11 @@
+{
+  "election_id": "d2f2ee86-9215-4743-aa08-2553b4077ec9",
+  "election_name": "Kansas Election",
+  "vote_count": 1,
+  "results": {
+    "Kar": 0,
+    "Dow": 0,
+    "Low": 1
+  },
+  "timestamp": "2025-04-03 16:51:57"
+}
